@@ -1,0 +1,15 @@
+<div>
+  <span><%= message %></span>
+  <form action="/profile" method="post">
+    <h2> Change Password </h2>
+    <input type="hidden" name="_id" value="<%= user._id %>" />
+
+    <label> New Password </label>
+    <input type="password" name="password" />
+
+    <label> Confirm Password </label> 
+    <input type="password" name="passwordConfirm" />
+
+    <button type="submit"> Update Password </button>
+  </form>
+</div>

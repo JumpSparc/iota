@@ -1,0 +1,14 @@
+<% if (message.length > 0) { %>
+        <div class="alert alert-danger"><%= message %></div>
+<% } %>
+
+
+<form action="login" method="post">
+  <label> Email </label>
+  <input type="email" name="email" />
+
+  <label> Password </label>
+  <input type="password" name="password" />
+
+  <button type="submit"> Login </button>
+</form>
