@@ -1,21 +1,16 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <div>
-      <form action="/users/signup" method="post">
-        <label> Email </label>
-        <input type='email' name='email' />
+<% include ../shared/header %>
+<h2> <%= title %> </h2>
+<div>
+  <form action="/user/signup" method="post">
+    <label> Email </label>
+    <input type='email' name='email' />
 
-        <label> Password </label>
-        <input type='password' name='password' />
+    <label> Password </label>
+    <input type='password' name='password' />
 
-        <button type='submit'> Signup </button>
-        
-      </form>
-    </div>
-  </body>
-</html>
+    <button type='submit'> Signup </button>
+    
+  </form>
+</div>
+
+<% include ../shared/footer %>

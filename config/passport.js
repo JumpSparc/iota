@@ -15,16 +15,18 @@ module.exports = function(passport){
 
   // login authentication
   passport.use(new Local({
-      usernameField: 'email',
+      usernameField: 'username',
       passwordField: 'password',
       passReqToCallback: true
     },
-    function(req, email, password, done){
-      User.findOne({email: email}, function(err, user){
+    function(req, username, password, done){
+      // allows login with username or email
+      var criteria = (username.indexOf('@') === -1) ? {username: username} : {email: username};
+      User.findOne(criteria, function(err, user){
         if(err) { return done(err); }
       
         if(!user){
-          return done(null, false, req.flash('loginMessage', 'Incorrect email'));
+          return done(null, false, req.flash('loginMessage', 'User does not exist.'));
         }
 
         if(!user.comparePassword(password)){

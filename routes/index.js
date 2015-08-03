@@ -1,25 +1,34 @@
-module.exports = function(express, passport){
-  var router = express.Router();
-  var User   = require('../models/user');
+var express = require('express');
+var router  = express.Router();
+var User   = require('../models/user');
+var auth = require('../lib/auth');
 
-  router.get('/', isLoggedIn, function(req, res, next) {
+module.exports = function(passport){
+
+
+  router.get('/', auth.isLoggedIn, function(req, res, next) {
     res.render('index', { title: 'Express' });
   })
-  
+  // login page
   .get('/login', function(req, res, next) {
     res.render('login',{ message: req.flash('loginMessage') });
   })
-  
+  // login method
   .post('/login', passport.authenticate('local', { successRedirect: '/', 
                                                    failureRedirect: '/login',
                                                    failureFlash: true
                                       })
   )
-
-  .get('/profile', isLoggedIn, function(req, res, next){
+  // logout method
+  .get('/logout', function(req, res, next){
+    req.logout();
+    res.redirect('/login');
+  })
+  // user profile page
+  .get('/profile', auth.isLoggedIn, function(req, res, next){
     res.render('users/profile', {user: req.user, message: req.flash('changePassMessage')});
   })
-  
+  // update user profile
   .post('/profile', function(req, res, next) {
     User.findById(req.body._id, function(err, user) {
       console.log(user);
@@ -32,14 +41,7 @@ module.exports = function(express, passport){
         res.redirect('/profile');
       });
     });
-    //res.json(req.body);
   });
 
-  function isLoggedIn(req, res, next){
-    if(req.isAuthenticated()) return next();
-    
-    // user session is not found
-    res.redirect('/login');
-  }
   return router;
 };

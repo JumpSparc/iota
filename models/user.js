@@ -1,11 +1,26 @@
 var bcrypt   = require('bcrypt');
 var mongoose = require('mongoose');
+var Schema   = mongoose.Schema;
+var ObjectId = Schema.Types.ObjectId;
 
 // Schemas
-var userSchema = mongoose.Schema({
-  email: {type: String, required: true, index: {unique: true}},
-  password: {type: String, required: true},
-  devices: { type : Array , default: [] },
+var userSchema = Schema({
+  email: {
+    type: String, 
+    required: true, 
+    index: {unique: true}
+  },
+  username: {
+    type: String
+  },
+  password: {
+    type: String, 
+    required: true
+  },
+  devices: [{ 
+    type : ObjectId, 
+    ref: 'Device'
+  }],
   created_at:  { type: Date, default: Date.now } 
 }); 
 

@@ -1,0 +1,15 @@
+<!-- TODO add logic for multiple devices -->
+<form action="/device/<%= action %>"  method="post">
+  <!-- fix area chart for now -->
+  <input type="hidden" name="graph" value="area" />
+  <input type="hidden" name="_id" value="<%= device.id %>" />
+  
+  <label for="name"> Device Name </label>
+  <input type="text" name="name" id="name" value="<%= device.name %>" />
+
+  <label for="desc">
+  <textarea name="desc" id="desc"><%= device.desc %></textarea>
+
+  <button type='submit'> <%= action %> Device </button>
+  
+</form>
