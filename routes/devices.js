@@ -54,7 +54,9 @@ module.exports = function(passport) {
   })
   
   .delete('/destroy/:id', function(req, res, next){
-    // TODO add device destroy 
+    Device.find({ _id: req.params.id }).remove().exec();
+    console.log('Device Deleted: ' + req.params.id);
+    res.json('success');
   });
 
   return router;

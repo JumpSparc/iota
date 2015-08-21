@@ -4,7 +4,7 @@
     <%= device.name %>
     <a href="/device/edit/<%= device._id%>"> Edit </a>
     <!-- add destroy device functionality -->
-    <a href="#" class="destroy-device" data-id="<%= device._id%>"> Delete </a>
+    <a href="#" class="btn btn-danger delete-device" data-id="<%= device._id%>"> Delete </a>
   </li>
   <% }); %>
 </ul>
