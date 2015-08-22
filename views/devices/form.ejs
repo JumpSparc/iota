@@ -47,13 +47,26 @@
               <label class="col-md-3 col-xs-12 control-label">Device cluster</label>
               <div class="col-md-6 col-xs-12">
                 <div class="input-group">
-                  <label class="check"><input type="checkbox" class="icheckbox"  id="device-cluster" name='cluster' /></label>
+                  <label class="check">
+                    <input type="checkbox" class="icheckbox"  id="device-cluster" name='cluster' <%= ( device.cluster ? 'checked="checked"' : '' ) %> />
+                  </label>
 
                 </div>
                 <div class='input-group' id="child-devices">
                   <input type="text" class="form-control" id='child-device-input' /> 
                   <a class="btn btn-primary" id="child-device-btn"> Add child device </a>
-                  <ul class="devices"></ul>
+                  <ul class="devices">
+                    <% if( typeof device.child_devices !== 'undefined' && device.child_devices.length > 0 ) {%>
+                      <% device.child_devices.forEach(function(child) { %>
+                        <li>
+                          <p> <%= child.name %> </p>
+                          <input type="hidden" name="child_devices" value="<%= child.name%>" />
+                          <input type="hidden" name="child_ids" value="<%= child._id%>" />
+                          <a href="#" class="child-device-remove"> Delete </a>
+                        </li>
+                      <% }) %>
+                    <% } %>
+                  </ul>
                 </div>
               </div>
             </div>

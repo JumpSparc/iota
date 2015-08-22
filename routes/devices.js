@@ -2,6 +2,7 @@ var express = require('express');
 var router  = express.Router();
 var auth    = require('../lib/auth');
 var Device  = require('../models/device');
+var _       = require('underscore');
 
 module.exports = function(passport) {
 
@@ -20,10 +21,17 @@ module.exports = function(passport) {
   // /device/create - create new device
   .post('/create', function(req, res, next){
     var cluster = ( req.body.cluster == 'on' ? true : false );
-    var children = [];
-    var childrenIds = [];
+    var newDevice = {
+      user_id: req.user._id,
+      name: req.body.name,
+      cluster: cluster,
+      desc: req.body.desc,
+      data: req.body.device_data.split(',')
+    };
 
-    if(typeof req.body.child_devices !== 'undefined' && req.body.child_devices.length > 0) {
+    if( typeof req.body.child_devices !== 'undefined' && req.body.child_devices.constructor === Array ) {
+      var children = [];
+      var childrenIds = [];
       req.body.child_devices.forEach(function(child) {
         children.push({ name: child });
       });
@@ -31,61 +39,104 @@ module.exports = function(passport) {
         if(err) res.render('devices/new', {message: err});
         childrenIds = data.map(function(child){ return child._id});
         
-        var newDevice = new Device({
-          user_id: req.user._id,
-          name: req.body.name,
-          cluster: cluster,
-          child_devices: childrenIds,
-          desc: req.body.desc,
-          data: req.body.device_data.split(',')
-        });
-
-        newDevice.save(function(err) {
-          if(err) res.render('devices/new', {message: err});
-          req.flash('deviceMessage', 'Successfuly added a new device!');
-          res.redirect('/device'); 
-        });
+        newDevice.child_devices = childrenIds; 
+        saveDevice(newDevice, req, res);
+      });
+    }
+    else if( typeof req.body.child_devices !== 'undefined' && req.body.child_devices.constructor === String ){
+      Device.create({ name: req.body.child_devices}, function(err, data) {
+        if(err) res.render('devices/new', {message: err});
+        
+        newDevice.child_devices = data._id; 
+        saveDevice(newDevice, req, res);
       });
     }
     else{
-      var newDevice = new Device({
-        user_id: req.user._id,
-        name: req.body.name,
-        cluster: cluster,
-        desc: req.body.desc,
-        data: req.body.device_data.split(',')
-      });
-
-      newDevice.save(function(err) {
-        if(err) res.render('devices/new', {message: err});
-
-        req.flash('deviceMessage', 'Successfuly added a new device!');
-        res.redirect('/device'); 
-      });
+      saveDevice(newDevice, req, res);
     }
   })
+
   // edit device
   .get('/edit/:id', auth.isLoggedIn, function(req, res, next){
-    Device.findOne({_id: req.params.id}, function(err, device){
+    Device.findOne({_id: req.params.id}).populate('child_devices').exec(function(err, device){
       res.render('devices/edit', {action: 'update', device: device});
     });
   })
   
   // TODO change to 'put' http verb later
+  // TODO change to meaningful variable names, sabaw pa ko ngayon
+  // OPTIMIZE refactor this later, full of crappy logic
   .post('/update', function(req, res, next){
-    data = {
+    var cluster = ( req.body.cluster == 'on' ? true : false );
+    // could be a string or array or undefined
+    var childDevices = req.body.child_devices;
+    var childrenIds  = req.body.child_ids;
+
+    // update params
+    var updateData = {
       name:  req.body.name,
       desc:  req.body.desc,
+      cluster: cluster,
       graph: req.body.graph,
       data: req.body.device_data.split(',')
     };
-    Device.findOneAndUpdate({_id: req.body._id}, data, function(err, device){
-      console.log(device);
-      req.flash('deviceMessage', ' updated!');
-      res.redirect('/device');
-    });
+ 
+    if( typeof childDevices !== 'undefined' && childDevices.constructor === Array ) {
+      Device.find({ _id: { $in: childrenIds}}, function(err, data) {
+        var existingChildIds = ( typeof childrenIds !== 'undefined' && childrenIds.constructor === Array ? childrenIds : []);
+        var existingChild = [];
+        var newChild;
+
+        if( typeof data !== 'undefined' ) {
+          existingChild = data.map(function(child){ return child.name; });
+          newChild = _.difference(childDevices, existingChild );
+        }
+        else {
+          newChild = childDevices;
+        }
+        
+        var newChildQuery;
+        // if it has many new child devices
+        if( newChild.constructor === Array ) {
+           newChildQuery = newChild.map(function(child) { return { name: child }; });
+        }
+
+        Device.create(newChildQuery, function(err, newChildData) {
+        
+          newChildData.map(function(child) {
+            existingChildIds.push(child._id);  
+          });
+          updateData.child_devices = existingChildIds;
+
+          updateDevice(updateData, req, res); 
+        });
+      });
+    }
+    else if( typeof childDevices !== 'undefined' && childDevices.constructor === String ) {
+      console.log('1 child device only'); 
+      if( typeof childrenIds == 'undefined' ) {
+        console.log('new child device');
+        Device.create({ name: childDevices }, function(err, newDevice) {
+          updateData.child_devices = [newDevice._id]
+          updateDevice(updateData, req, res); 
+        });
+      }
+      else {
+        console.log('same device');
+        updateData.child_devices = [childrenIds]
+        updateDevice(updateData, req, res); 
+      }
+      
+    }
+    else{ 
+      console.log('no child device');
+      updateData.cluster       = false;
+      updateData.child_devices = [];
+      updateDevice(updateData, req, res); 
+    }
   })
   
+  // delete device
   .delete('/destroy/:id', function(req, res, next){
     Device.find({ _id: req.params.id }).remove().exec();
     console.log('Device Deleted: ' + req.params.id);
@@ -94,3 +145,19 @@ module.exports = function(passport) {
 
   return router;
 };
+
+function saveDevice(data, req, res) {
+  Device.create(data, function(err) {
+    if(err) res.render('devices/new', {message: err});
+
+    req.flash('deviceMessage', 'Successfuly added a new device!');
+    res.redirect('/device'); 
+  });
+}
+
+function updateDevice(data, req, res) {
+  Device.findOneAndUpdate({_id: req.body._id}, data, function(err, device){
+    req.flash('deviceMessage', ' updated!');
+    res.redirect('/device');
+  });
+}
