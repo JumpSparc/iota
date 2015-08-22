@@ -19,19 +19,50 @@ module.exports = function(passport) {
   })
   // /device/create - create new device
   .post('/create', function(req, res, next){
-    var newDevice = new Device({
-      user_id: req.user._id,
-      name: req.body.name,
-      desc: req.body.desc
-    });
-    // TODO add device cluster support, and type of data that will be used
-    // e.g. category = Solar Panel, data = Power
+    var cluster = ( req.body.cluster == 'on' ? true : false );
+    var children = [];
+    var childrenIds = [];
 
-    newDevice.save(function(err) {
-      if(err) res.render('devices/new', {message: err});
-      req.flash('deviceMessage', 'Successfuly added a new device!');
-      res.redirect('/device'); 
-    });
+    if(typeof req.body.child_devices !== 'undefined' && req.body.child_devices.length > 0) {
+      req.body.child_devices.forEach(function(child) {
+        children.push({ name: child });
+      });
+      Device.create(children, function(err, data) {
+        if(err) res.render('devices/new', {message: err});
+        childrenIds = data.map(function(child){ return child._id});
+        
+        var newDevice = new Device({
+          user_id: req.user._id,
+          name: req.body.name,
+          cluster: cluster,
+          child_devices: childrenIds,
+          desc: req.body.desc,
+          data: req.body.device_data.split(',')
+        });
+
+        newDevice.save(function(err) {
+          if(err) res.render('devices/new', {message: err});
+          req.flash('deviceMessage', 'Successfuly added a new device!');
+          res.redirect('/device'); 
+        });
+      });
+    }
+    else{
+      var newDevice = new Device({
+        user_id: req.user._id,
+        name: req.body.name,
+        cluster: cluster,
+        desc: req.body.desc,
+        data: req.body.device_data.split(',')
+      });
+
+      newDevice.save(function(err) {
+        if(err) res.render('devices/new', {message: err});
+
+        req.flash('deviceMessage', 'Successfuly added a new device!');
+        res.redirect('/device'); 
+      });
+    }
   })
   // edit device
   .get('/edit/:id', auth.isLoggedIn, function(req, res, next){
@@ -40,11 +71,13 @@ module.exports = function(passport) {
     });
   })
   
+  // TODO change to 'put' http verb later
   .post('/update', function(req, res, next){
     data = {
       name:  req.body.name,
       desc:  req.body.desc,
-      graph: req.body.graph
+      graph: req.body.graph,
+      data: req.body.device_data.split(',')
     };
     Device.findOneAndUpdate({_id: req.body._id}, data, function(err, device){
       console.log(device);

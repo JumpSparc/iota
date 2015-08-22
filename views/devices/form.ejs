@@ -1,5 +1,6 @@
+<% var device_data =  (action == 'update' ? device.data.join(',') : '' ); %>
 <div class="page-content-wrap">
-  <div class="row">
+  <div class="row"> 
     <div class="col-md-12 panel panel-default">
 
       <!-- TODO add logic for multiple devices -->
@@ -36,13 +37,28 @@
               <div class="col-md-6 col-xs-12">
                 <div class="input-group">
                   <!-- TODO: add logic for update value later -->
-                  <input type="text" name="device_data" id="device_data" class="tagsinput" />
+                  <input type="text" name="device_data" id="device_data" class="tagsinput" value="<%= device_data %>" />
                   <span class="help-block">Data that the api will receive </span>
                 </div>
               </div>
             </div>
 
-            <button type='submit' class="btn btn-primary"> <%= action %> Device </button>
+            <div class="form-group">
+              <label class="col-md-3 col-xs-12 control-label">Device cluster</label>
+              <div class="col-md-6 col-xs-12">
+                <div class="input-group">
+                  <label class="check"><input type="checkbox" class="icheckbox"  id="device-cluster" name='cluster' /></label>
+
+                </div>
+                <div class='input-group' id="child-devices">
+                  <input type="text" class="form-control" id='child-device-input' /> 
+                  <a class="btn btn-primary" id="child-device-btn"> Add child device </a>
+                  <ul class="devices"></ul>
+                </div>
+              </div>
+            </div>
+
+            <button type='submit' class="btn btn-primary"> <%= action %> </button>
           </div>
        </form>
     </div>

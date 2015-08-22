@@ -10,7 +10,7 @@ var deviceSchema = Schema({
     ref: 'User'
   },
   name:        String,
-  is_multiple: Boolean,  // turns the device into a container
+  cluster:     Boolean,  // turns the device into a container
   type:        String,
   desc:        String,
   graph:       String,
