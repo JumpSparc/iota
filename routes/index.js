@@ -1,13 +1,18 @@
 var express = require('express');
 var router  = express.Router();
 var User   = require('../models/user');
+var Device   = require('../models/device');
+var Log   = require('../models/log');
 var auth = require('../lib/auth');
 
 module.exports = function(passport){
 
 
   router.get('/', auth.isLoggedIn, function(req, res, next) {
-    res.render('index', { title: 'Express' });
+    Device.find({ user_id: req.user._id }, function(err, devices) {
+    
+      res.render('index', { user: req.user, devices: devices});
+    }); 
   })
   // login page
   .get('/login', function(req, res, next) {
@@ -19,6 +24,7 @@ module.exports = function(passport){
                                                    failureFlash: true
                                       })
   )
+
   // logout method
   .get('/logout', function(req, res, next){
     req.logout();

@@ -1,0 +1,44 @@
+<div class="chart-container">
+  <% devices.forEach(function(device) { %>
+    <label> <%= device.name %> </label>
+    <div id="chart<%= device._id %>"> </div>
+  <% }); %>
+</div>
+
+<script>
+$(function() {
+  // set rickshaw charts
+
+  <% devices.forEach(function(device) { %>
+    fetchData('<%= device._id %>');
+  <% }); %>
+});
+
+function fetchData(id){
+  $.ajax({
+    url: '/api/v1/fetch/' + id,
+    method: "GET",
+    data: { id: id },
+    success: function(data){
+      console.log('device_id: ' + id);
+      console.log(data); 
+      console.log('------------------------'); 
+      generateGraph(data, '#chart' + id);
+    }
+  });
+}
+
+function generateGraph(series, elemId){
+  console.log('GRAPH STARTS HERE');
+  console.log(series);
+  var graph = new Rickshaw.Graph({
+      element: document.querySelector(elemId),
+      width: 580,
+      height: 250,
+      series: series
+  });
+  var axes = new Rickshaw.Graph.Axis.Time( { graph: graph } );
+
+  graph.render();
+}
+</script>

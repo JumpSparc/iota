@@ -15,7 +15,7 @@ var deviceSchema = Schema({
   desc:        String,
   graph:       String,
   gmap:        String,
-  data:        [String], // data that will be accepted
+  data:        [String], // TODO change to MIXED type and add color property
   child_devices: [{
     type: ObjectId,
     ref: 'Device'
