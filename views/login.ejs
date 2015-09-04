@@ -1,17 +1,47 @@
-<% include ./shared/header %>
+<html>
+  <head> 
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/stylesheets/theme-night.css' />
+	</head>
+  <body>
+		<% if (message.length > 0) { %>
+		<div class="alert alert-danger"><%= message %></div>
+		<% } %>
 
-<% if (message.length > 0) { %>
-  <div class="alert alert-danger"><%= message %></div>
-<% } %>
-
-<form action="login" method="post">
-  <label> Email </label>
-  <input type="text" name="username" />
-
-  <label> Password </label>
-  <input type="password" name="password" />
-
-  <button type="submit"> Login </button>
-</form>
-
-<% include ./shared/footer %>
+    <div class="login-container">  
+      <div class="login-box animated fadeInDown">
+        <div class="login-body">
+          <div class="login-title"><strong>Welcome</strong></div>
+          <form action="/login" class="form-horizontal" method="post">
+            <div class="form-group">
+              <div class="col-md-12">
+                  <input type="text" class="form-control" name="username" placeholder="Username"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-md-12">
+                  <input type="password" class="form-control" name="password" placeholder="Password"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-md-6">
+                  <button class="btn btn-info btn-block">Log In</button>
+              </div>
+            </div>
+          </form>
+          </div>
+          <div class="login-footer">
+              <div class="pull-left">
+                  &copy; 2015 Jumpsparc
+              </div>
+              <div class="pull-right">
+                  <a href="#">About</a> |
+                  <a href="#">Privacy</a> |
+                  <a href="#">Contact Us</a>
+              </div>
+          </div>
+      </div>
+        
+    </div>
+	</body>
+</html>
