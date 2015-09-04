@@ -13,8 +13,7 @@ module.exports = function(){
   .get('/push', function(req, res, next) {
     // require device_id for push
     if (!req.query.device_id){
-      //res.json({error: 'device_id required.'});
-      res.json({error: req.query});
+      res.json({error: 'device_id required.'});
     } // endif
     else{
       var device_id = req.query.device_id; 
