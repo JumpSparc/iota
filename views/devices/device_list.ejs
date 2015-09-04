@@ -14,6 +14,12 @@
     <a href="#" data-id="<%= device._id%>"> Delete </a>	
 	</td>	
 </tr>
+<tr>
+	<!-- API URL -->
+	<td colspan='3' class="well">
+		http://jumpsparc-iot.herokuapp.com/api/v1/push?device_id=<%= device._id%>?<%= device.data.map(function(item){ return item +"=<value>"; }).join("&"); %>
+	</td>
+</tr>
 <% }); %>
 
 </table>
