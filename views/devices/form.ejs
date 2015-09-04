@@ -1,79 +1,76 @@
 <% var device_data =  (action == 'update' ? device.data.join(',') : '' ); %>
-<div class="page-content-wrap">
-  <div class="row"> 
-    <div class="col-md-12 panel panel-default">
+<div class="row"> 
+  <div class="col-md-12 panel panel-default">
 
-      <!-- TODO add logic for multiple devices -->
-        <form class="form-horizontal" action="/device/<%= action %>"  method="post">
-          <div class="panel-heading">
-            <h3 class="panel-title"> </h3>
+    <!-- TODO add logic for multiple devices -->
+      <form class="form-horizontal" action="/device/<%= action %>"  method="post">
+        <div class="panel-body">
+          <h2 class="panel-title"> Edit </h2>
+          <br><hr>
+          <!-- fix area chart for now -->
+          <input type="hidden" name="graph" value="area" />
+          <input type="hidden" name="_id" value="<%= device.id %>" />
+          
+          <div class="form-group">
+            <label class="col-md-3 col-xs-12 control-label"> Name</label>
+            <div class="col-md-6 col-xs-12">
+              <div class="input-group">
+                <input type="text" name="name" id="name" class="form-control" value="<%= device.name %>" />
+              </div>
+            </div>
           </div>
-          <div class="panel-body">
-            <!-- fix area chart for now -->
-            <input type="hidden" name="graph" value="area" />
-            <input type="hidden" name="_id" value="<%= device.id %>" />
-            
-            <div class="form-group">
-              <label class="col-md-3 col-xs-12 control-label"> Name</label>
-              <div class="col-md-6 col-xs-12">
-                <div class="input-group">
-                  <input type="text" name="name" id="name" class="form-control" value="<%= device.name %>" />
-                </div>
+
+          <div class="form-group">
+            <label class="col-md-3 col-xs-12 control-label">Description</label>
+            <div class="col-md-6 col-xs-12">
+              <div class="input-group">
+                <textarea name="desc" class="form-control" id="desc"><%= device.desc %></textarea>
               </div>
             </div>
-
-            <div class="form-group">
-              <label class="col-md-3 col-xs-12 control-label">Description</label>
-              <div class="col-md-6 col-xs-12">
-                <div class="input-group">
-                  <textarea name="desc" class="form-control" id="desc"><%= device.desc %></textarea>
-                </div>
-              </div>
-            </div>
-
-
-            <div class="form-group">
-              <label class="col-md-3 col-xs-12 control-label">Data</label>
-              <div class="col-md-6 col-xs-12">
-                <div class="input-group">
-                  <!-- TODO: add logic for update value later -->
-                  <input type="text" name="device_data" id="device_data" class="tagsinput" value="<%= device_data %>" />
-                  <span class="help-block">Data that the api will receive </span>
-                </div>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="col-md-3 col-xs-12 control-label">Device cluster</label>
-              <div class="col-md-6 col-xs-12">
-                <div class="input-group">
-                  <label class="check">
-                    <input type="checkbox" class="icheckbox"  id="device-cluster" name='cluster' <%= ( device.cluster ? 'checked="checked"' : '' ) %> />
-                  </label>
-
-                </div>
-                <div class='input-group' id="child-devices">
-                  <input type="text" class="form-control" id='child-device-input' /> 
-                  <a class="btn btn-primary" id="child-device-btn"> Add child device </a>
-                  <ul class="devices">
-                    <% if( typeof device.child_devices !== 'undefined' && device.child_devices.length > 0 ) {%>
-                      <% device.child_devices.forEach(function(child) { %>
-                        <li>
-                          <p> <%= child.name %> </p>
-                          <input type="hidden" name="child_devices" value="<%= child.name%>" />
-                          <input type="hidden" name="child_ids" value="<%= child._id%>" />
-                          <a href="#" class="child-device-remove"> Delete </a>
-                        </li>
-                      <% }) %>
-                    <% } %>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <button type='submit' class="btn btn-primary"> <%= action %> </button>
           </div>
-       </form>
-    </div>
+
+
+          <div class="form-group">
+            <label class="col-md-3 col-xs-12 control-label">Data</label>
+            <div class="col-md-6 col-xs-12">
+              <div class="input-group">
+                <!-- TODO: add logic for update value later -->
+                <input type="text" name="device_data" id="device_data" class="tagsinput" value="<%= device_data %>" />
+                <span class="help-block">Data that the api will receive </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-md-3 col-xs-12 control-label">Device cluster</label>
+            <div class="col-md-6 col-xs-12">
+              <div class="input-group">
+                <label class="check">
+                  <input type="checkbox" class="icheckbox"  id="device-cluster" name='cluster' <%= ( device.cluster ? 'checked="checked"' : '' ) %> />
+                </label>
+
+              </div>
+              <div class='input-group' id="child-devices">
+                <input type="text" class="form-control" id='child-device-input' /> 
+                <a class="btn btn-primary" id="child-device-btn"> Add child device </a>
+                <ul class="devices">
+                  <% if( typeof device.child_devices !== 'undefined' && device.child_devices.length > 0 ) {%>
+                    <% device.child_devices.forEach(function(child) { %>
+                      <li>
+                        <p> <%= child.name %> </p>
+                        <input type="hidden" name="child_devices" value="<%= child.name%>" />
+                        <input type="hidden" name="child_ids" value="<%= child._id%>" />
+                        <a href="#" class="child-device-remove"> Delete </a>
+                      </li>
+                    <% }) %>
+                  <% } %>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <button type='submit' class="btn btn-primary"> <%= action %> </button>
+        </div>
+     </form>
   </div>
 </div>

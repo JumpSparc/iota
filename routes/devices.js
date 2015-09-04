@@ -157,7 +157,7 @@ function saveDevice(data, req, res) {
 
 function updateDevice(data, req, res) {
   Device.findOneAndUpdate({_id: req.body._id}, data, function(err, device){
-    req.flash('deviceMessage', ' updated!');
+    req.flash('deviceMessage', 'Device updated!');
     res.redirect('/device');
   });
 }

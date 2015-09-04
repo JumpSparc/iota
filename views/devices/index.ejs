@@ -1,10 +1,20 @@
 <% include ../shared/header %>
-  <%= message %>
-
-  <h2> Devices </h2>
-  <a href="/device/new"> Add new device </a>
-  
-  <!-- device list -->
-  <% include device_list %>
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <% if(message.length > 0 ) { %> 
+          <div class="alert alert-success"> <%= message %></div>
+        <% } %>
+  			
+			  <h2> Devices </h2>
+			  <a href="/device/new" class="btn btn-primary btn-sm"> Add new device </a> <br><br>
+			  
+			  <!-- device list -->
+			  <% include device_list %>
+      </div>
+    </div>
+  </div>
+</div>
 
 <% include ../shared/footer %>

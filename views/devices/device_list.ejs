@@ -1,10 +1,19 @@
-<ul>
-  <% devices.forEach(function(device, index){ %>
-  <li>
-    <%= device.name %>
-    <a href="/device/edit/<%= device._id%>"> Edit </a>
-    <!-- add destroy device functionality -->
-    <a href="#" data-id="<%= device._id%>"> Delete </a>
-  </li>
-  <% }); %>
-</ul>
+<table class="table">
+<tr>
+	<th>Name</th>
+	<th>Device Id</th>
+	<th></th>
+</tr>
+<% devices.forEach(function(device, index){ %>
+
+<tr>
+	<td><%= device.name %></td>	
+	<td><%= device._id %></td>	
+	<td>
+		<a href="/device/edit/<%= device._id%>"> Edit </a>
+    <a href="#" data-id="<%= device._id%>"> Delete </a>	
+	</td>	
+</tr>
+<% }); %>
+
+</table>
