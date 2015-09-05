@@ -19,7 +19,7 @@ module.exports = function(){
       var device_id = req.query.device_id; 
       // remove the device_id from the query object
       delete req.query.device_id;
-
+      
       Device.findOne({_id: device_id}, function(err, device) {
         var  query_keys = Object.keys(req.query);
         if (device){

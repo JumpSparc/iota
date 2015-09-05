@@ -6,15 +6,15 @@
 </tr>
 <% devices.forEach(function(device, index){ %>
 
-<tr>
+<tr class="device<%= device._id %>">
 	<td><%= device.name %></td>	
 	<td><%= device._id %></td>	
 	<td>
 		<a href="/device/edit/<%= device._id%>"> Edit </a>
-    <a href="#" data-id="<%= device._id%>"> Delete </a>	
+    <a href="#" class="delete-device" data-id="<%= device._id%>"> Delete </a>	
 	</td>	
 </tr>
-<tr>
+<tr class="device<%= device._id %>">
 	<!-- API URL -->
 	<td colspan='3' class="well">
 		http://jumpsparc-iot.herokuapp.com/api/v1/push?device_id=<%= device._id%>?<%= device.data.map(function(item){ return item +"=<value>"; }).join("&"); %>

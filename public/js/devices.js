@@ -24,7 +24,7 @@ $(document).ready(function() {
   // delete device
   $('.delete-device').click(function() {
     var deviceId    = $(this).data('id');
-    var parentElem  = $(this).parent();
+    var parentElem  = $('.device' + deviceId);
 
     $.ajax({
       url: '/device/destroy/' + deviceId,
