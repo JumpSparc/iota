@@ -2,6 +2,7 @@
   <% devices.forEach(function(device) { %>
     <h3> <%= device.name %> </h3>
     <div id="chart<%= device._id %>"> </div>
+    <div id="y_axis<%= device._id %>"> </div>
   <% }); %>
 </div>
 
@@ -10,16 +11,17 @@ $(function() {
   // set rickshaw charts
 
   <% devices.forEach(function(device) { %>
-    fetchData('<%= device._id %>');
+    generateGraph('<%= device._id %>', '#chart<%= device._id %>');
   <% }); %>
 });
 
 function fetchData(id){
   $.ajax({
     url: '/api/v1/fetch/' + id,
+    dataType: "json",
     method: "GET",
-    data: { id: id },
     success: function(data){
+
       console.log('device_id: ' + id);
       console.log(data); 
       console.log('------------------------'); 
@@ -28,17 +30,28 @@ function fetchData(id){
   });
 }
 
-function generateGraph(series, elemId){
+function generateGraph(id, elemId, yAxis){
   console.log('GRAPH STARTS HERE');
-  console.log(series);
-  var graph = new Rickshaw.Graph({
+  var graph = new Rickshaw.Graph.Ajax({
       element: document.querySelector(elemId),
+      dataURL: '/api/v1/fetch/' + id,
       width: 580,
       height: 250,
-      series: series
-  });
-  var axes = new Rickshaw.Graph.Axis.Time( { graph: graph } );
+      onData: function(d) { console.log(d); return d;},
+      onComplete: function() {
+        // this is also where you can set up your axes and hover detail
+          var axes = new Rickshaw.Graph.Axis.Time( { graph: this.graph } );
+          var y_axis = new Rickshaw.Graph.Axis.Y( {
+                  graph: graph,
+                  orientation: 'left',
+                  tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+                  element: document.getElementById('y_axis' + id),
+          } );
 
-  graph.render();
+          this.graph.render();
+        }
+  });
+
+  // graph.render();
 }
 </script>

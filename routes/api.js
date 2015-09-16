@@ -19,13 +19,15 @@ module.exports = function(){
       var device_id = req.query.device_id; 
       // remove the device_id from the query object
       delete req.query.device_id;
-      
+
       Device.findOne({_id: device_id}, function(err, device) {
         var  query_keys = Object.keys(req.query);
         if (device){
+          var variables = device.variable.map(function(item) { return item.name; });
+          console.log('---------------------------------------');
+          console.log(variables);
           // if query has valid data
-          if(_.isEqual(device.data.sort(), query_keys.sort())) {
-            var required_data = device.data;
+          if(_.isEqual(variables.sort(), query_keys.sort())) {
             newLog = new Log({
               device_id: device._id,
               data: req.query
@@ -36,8 +38,7 @@ module.exports = function(){
             });
           }
           else{
-            var allowed_data = device.data.join(', ');
-            res.json({ error: "Allowed Data: " + allowed_data });
+            res.json({ error: "Allowed Data: " + variables.join(', ') });
           } 
         }
         else{
@@ -53,19 +54,18 @@ module.exports = function(){
       d.exec( function(err, logs) {
         if (err) throw err;
         var series = [];
-        device.data.forEach(function(item) {
-          var color = '#'+Math.floor(Math.random()*16777215).toString(16);
+        device.variable.forEach(function(item) {
           var data = [];
           logs.forEach(function(log) {
-            data.push({ x: log.created_at.getTime(), y: parseInt(log.data[item]) });
+            data.push({ x: log.created_at.getTime(), y: parseInt(log.data[item.name]) });
           });
           series.push({
-            name: item,
-            color: color,
+            name: item.name,
+            color: item.color,
             data: data
           });
         });
-        res.send(series);
+        res.json(series);
       });
     });
   });

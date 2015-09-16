@@ -2,6 +2,7 @@ var bcrypt   = require('bcrypt');
 var mongoose = require('mongoose');
 var Schema   = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
+var Mixed    = Schema.Types.Mixed;
 
 // Schemas
 var deviceSchema = Schema({
@@ -11,11 +12,14 @@ var deviceSchema = Schema({
   },
   name:        String,
   cluster:     Boolean,  // turns the device into a container
+  privacy:     Boolean,
   type:        String,
   desc:        String,
   graph:       String,
+  location:    String,
   gmap:        String,
-  data:        [String], // TODO change to MIXED type and add color property
+  data:        [String],
+  variable:    [Mixed], // {name:"value", color: "hex-value"}
   child_devices: [{
     type: ObjectId,
     ref: 'Device'

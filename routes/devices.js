@@ -24,9 +24,12 @@ module.exports = function(passport) {
     var newDevice = {
       user_id: req.user._id,
       name: req.body.name,
+      privacy: req.body.privacy,
+      location: req.body.location,
       cluster: cluster,
+      graph: req.body.graph,
       desc: req.body.desc,
-      data: req.body.device_data.split(',')
+      variable: JSON.parse(req.body.variable)
     };
 
     if( typeof req.body.child_devices !== 'undefined' && req.body.child_devices.constructor === Array ) {
@@ -76,9 +79,11 @@ module.exports = function(passport) {
     var updateData = {
       name:  req.body.name,
       desc:  req.body.desc,
+      privacy: req.body.privacy,
+      location: req.body.location,
       cluster: cluster,
       graph: req.body.graph,
-      data: req.body.device_data.split(',')
+      variable: JSON.parse(req.body.variable)
     };
  
     if( typeof childDevices !== 'undefined' && childDevices.constructor === Array ) {

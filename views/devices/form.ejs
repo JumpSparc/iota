@@ -1,4 +1,6 @@
-<% var device_data =  (action == 'update' ? device.data.join(',') : '' ); %>
+<% 
+  var device_variable =  (device.variable !== undefined && device.variable !== 'undefined' ? JSON.stringify(device.variable) : '[]' ); 
+%>
 <div class="row"> 
   <div class="col-md-12 panel panel-default">
 
@@ -31,12 +33,67 @@
 
 
           <div class="form-group">
-            <label class="col-md-3 col-xs-12 control-label">Data</label>
+            <label class="col-md-3 col-xs-12 control-label">Device Variables</label>
+            <div class="col-md-6 col-xs-12">
+              <!-- TODO finish color saving -->
+              <div class='input-group'>
+                <input type='hidden' name='variable' id='variable' value="<%= device_variable %>">
+                <a class="btn btn-primary" id="add-data-btn"> Add variable </a>
+                
+                <table class="table">
+                  <th> Name </th>
+                  <th> Color </th>
+                  <th> </th>
+                  <tbody id="device-data">
+                  <% if( typeof device.variable !== 'undefined' && device.variable.length > 0 ) {%>
+                    <% device.variable.forEach(function(d, i) { %>
+                    <tr data-order='<%= i %>'>
+                        <td><input type="text" class="form-control variable-input" value="<%= d.name %>" data-type="variable_name" /> </td>
+                        <td>
+                          <select class="variable-input colorpicker" data-type="color" >
+                            <option value="#CD5C5C" data-color="#CD5C5C">indianred</option>
+                            <option value="#FF4500" data-color="#FF4500">orangered</option>
+                            <option value="#008B8B" data-color="#008B8B">darkcyan</option>
+                            <option value="#B8860B" data-color="#B8860B">darkgoldenrod</option>
+                            <option value="#32CD32" data-color="#32CD32">limegreen</option>
+                            <option value="#FFD700" data-color="#FFD700">gold</option>
+                            <option value="#48D1CC" data-color="#48D1CC">mediumturquoise</option>
+                            <option value="#87CEEB" data-color="#87CEEB">skyblue</option>
+                            <option value="#FF69B4" data-color="#FF69B4">hotpink</option>
+                            <option value="#87CEFA" data-color="#87CEFA">lightskyblue</option>
+                            <option value="#6495ED" data-color="#6495ED">cornflowerblue</option>
+                            <option value="#DC143C" data-color="#DC143C">crimson</option>
+                            <option value="#FF8C00" data-color="#FF8C00">darkorange</option>
+                            <option value="#C71585" data-color="#C71585">mediumvioletred</option>
+                            <option value="#000000" data-color="#000000">black</optio +
+                          </select>
+                        </td>
+                        <td><a href="#" class="device-data-remove"> Delete </a></td>
+                      </tr>
+                    <% }) %>
+                  <% } %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-md-3 col-xs-12 control-label">Privacy</label>
             <div class="col-md-6 col-xs-12">
               <div class="input-group">
-                <!-- TODO: add logic for update value later -->
-                <input type="text" name="device_data" id="device_data" class="tagsinput" value="<%= device_data %>" />
-                <span class="help-block">Data that the api will receive </span>
+                <label class="check">
+                  <input type="checkbox" class="icheckbox"  name='privacy' <%= ( device.privacy ? 'checked="checked"' : '' ) %> />
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-md-3 col-xs-12 control-label"> Name</label>
+            <div class="col-md-6 col-xs-12">
+              <div class="input-group">
+                <input type="text" name="location" id="location" class="form-control" value="<%= device.location %>" />
               </div>
             </div>
           </div>
