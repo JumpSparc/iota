@@ -1,6 +1,7 @@
 var express = require('express');
 var router  = express.Router();
 var Device  = require('../models/device');
+var User    = require('../models/user');
 var Log     = require('../models/log');
 var _       = require('underscore');
 
@@ -24,8 +25,6 @@ module.exports = function(){
         var  query_keys = Object.keys(req.query);
         if (device){
           var variables = device.variable.map(function(item) { return item.name; });
-          console.log('---------------------------------------');
-          console.log(variables);
           // if query has valid data
           if(_.isEqual(variables.sort(), query_keys.sort())) {
             newLog = new Log({
@@ -50,25 +49,45 @@ module.exports = function(){
   
   .get('/fetch/:id', function(req, res, next) {
     Device.findOne({ _id: req.params.id }, function(err, device) {
-      var d = Log.find({'device_id' : device.id }, 'created_at data').limit(1000);
-      d.exec( function(err, logs) {
-        if (err) throw err;
-        var series = [];
-        device.variable.forEach(function(item) {
-          var data = [];
-          logs.forEach(function(log) {
-            data.push({ x: log.created_at.getTime(), y: parseInt(log.data[item.name]) });
+      if(device){
+        var d = Log.find({'device_id' : device.id }, 'created_at data').limit(1000);
+        d.exec( function(err, logs) {
+          if (err) throw err;
+          var series = [];
+          device.variable.forEach(function(item) {
+            var data = [];
+            logs.forEach(function(log) {
+              data.push({ x: log.created_at.getTime(), y: parseInt(log.data[item.name]) });
+            });
+            series.push({
+              name: item.name,
+              color: item.color,
+              data: data
+            });
           });
-          series.push({
-            name: item.name,
-            color: item.color,
-            data: data
-          });
+          res.json(series);
         });
-        res.json(series);
-      });
+      }
+      else{
+        res.json({error: "Device not found."});
+      }
     });
+  })
+  
+
+  // Mobile
+  .get('/sign_in', function(req, res, next) {
+  
+  })
+
+  .get('/fetch/all_devices/:id', function(req, res, next) {
+  
+  })
+  
+  .get('/forget_pass', function(req, res, next) {
+  
   });
+
 
   return router;
 };
