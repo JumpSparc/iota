@@ -77,13 +77,82 @@ module.exports = function(){
 
   // Mobile
   .get('/sign_in', function(req, res, next) {
+
+    var email = req.query.email;
+    var password = req.query.password;
+
+    if(email === undefined || password === undefined) { res.json({error: "email / password params required."}); }
+    else{
+      User.findOne({email: email}, function(err, user) {
+        var validPass =  user ? user.comparePassword(password) : false;
+        if(user && validPass){
+          res.json({success: user._id}); 
+        }
+        else if(user && !validPass){
+          res.json({error: "Wrong password."});
+        }
+        else{
+          res.json({error: "User does not exist."});
+        }
+      });
+    }
+  })
+  
+  // TODO add async loop to fix this shit
+  .get('/fetch/all_devices/:id', function(req, res, next) {
+    var user_id = req.params.id;
+
+    if(user_id){
+      Device.find({user_id: user_id}, function(err, devices) {
+        if(devices){
+          var all_devices = [];
+
+          devices.forEach(function(device) {
+            if(device){
+            console.log(device.name);
+              var d = Log.find({'device_id' : device.id }, 'created_at data').limit(1000);
+              d.exec( function(err, logs) {
+                if (err) throw err;
+                var series = [];
+                device.variable.forEach(function(item) {
+                  var data = [];
+                  logs.forEach(function(log) {
+                    data.push({ x: log.created_at.getTime(), y: parseInt(log.data[item.name]) });
+                  });
+                  series.push({
+                    name: item.name,
+                    color: item.color,
+                    data: data
+                  });
+                });
+                all_devices.push(series);
+              });
+            }
+          });      
+
+          res.json(all_devices);
+        }
+        else{
+          res.json({error: 'no devices found'});
+        }
+      }); 
+    }
+    else{
+      res.json({error: "User id required."});
+    }
+  })
+  
+  .get('/create_device', function(req, res, next) {
+    var user_id  = req.query.user_id;
+    var name     = req.query.name;
+    var desc     = req.query.desc;
+    var privacy  = req.query.privacy;
+    var graph    = req.query.graph;
+    var location = req.query.location;
+    var variable = {name: req.query.data, color: "#CD5C5C"};
   
   })
 
-  .get('/fetch/all_devices/:id', function(req, res, next) {
-  
-  })
-  
   .get('/forget_pass', function(req, res, next) {
   
   });
