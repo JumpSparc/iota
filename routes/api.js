@@ -1,4 +1,5 @@
 var express = require('express');
+var async   = require('async');
 var router  = express.Router();
 var Device  = require('../models/device');
 var User    = require('../models/user');
@@ -101,9 +102,36 @@ module.exports = function(){
   // TODO add async loop to fix this shit
   .get('/fetch/all_devices/:id', function(req, res, next) {
     var user_id = req.params.id;
-
     if(user_id){
-      Device.find({user_id: user_id}, function(err, devices) {
+      var data = [];
+      data.push(
+        {   
+          name: "Temperature Sensor",
+          desc: "temperature",
+          location: "manila",
+          privacy: false,
+          variables: [{
+           "name":"celsius",
+           "color":"#48D1CC",
+           "data":[{"x":1442829289502,"y":24},{"x":1442829291048,"y":27},{"x":1442829292523,"y":22},{"x":1442829294187,"y":24},{"x":1442829295647,"y":23},{"x":1442829297526,"y":24},{"x":1442829299135,"y":25},{"x":1442829300604,"y":26},{"x":1442829302164,"y":22},{"x":1442829303935,"y":27},{"x":1442829305707,"y":27},{"x":1442829308549,"y":28}]
+         }]
+        }
+      );
+      data.push(
+        {   
+          name: "Solar Test",
+          desc: "solar panel at home",
+          location: "manila",
+          privacy: false,
+          variables: [{
+              "name":"power",
+              "color":"#CD5C5C",
+              "data":[{"x":1442829201754,"y":4},{"x":1442829204463,"y":2},{"x":1442829206532,"y":5},{"x":1442829209300,"y":2},{"x":1442829211188,"y":3},{"x":1442829214003,"y":5},{"x":1442829216976,"y":2}]
+          }]
+        }
+      );
+      res.json(data);
+/*      Device.find({user_id: user_id}, function(err, devices) {
         if(devices){
           var all_devices = [];
 
@@ -135,7 +163,7 @@ module.exports = function(){
         else{
           res.json({error: 'no devices found'});
         }
-      }); 
+      });  */
     }
     else{
       res.json({error: "User id required."});
