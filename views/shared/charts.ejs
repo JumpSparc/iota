@@ -37,8 +37,9 @@ function generateGraph(id, elemId, yAxis){
       element: document.querySelector(elemId),
       dataURL: '/api/v1/fetch/' + id,
       width: 580,
-      height: 250,
+      //height: 250,
       onData: function(d) {
+        // This function loops through the x (time) in milllisecond epoch format and converts them to Rickshaw friendly format
         var n;
         for (n = 0; n < d[0].data.length; n++) {
           d[0].data[n].x /= 1000;
@@ -50,13 +51,14 @@ function generateGraph(id, elemId, yAxis){
       onComplete: function() {
         // this is also where you can set up your axes and hover detail
           var detail = new Rickshaw.Graph.HoverDetail({
-            graph: this.graph,
-            timeFixture: new Rickshaw.Fixtures.Time.Local()
+            graph: this.graph
            });
+
           var xAxis = new Rickshaw.Graph.Axis.Time( {
-          	graph: graph,
-          	timeFixture: new Rickshaw.Fixtures.Time.Local()
+          	graph: this.graph
           } );
+          xAxis.render();
+
 
           var y_axis = new Rickshaw.Graph.Axis.Y( {
                   graph: graph,
@@ -66,6 +68,7 @@ function generateGraph(id, elemId, yAxis){
 
           } );
           y_axis.render();
+          y_axis.graph.update();
 
 
           this.graph.render();
