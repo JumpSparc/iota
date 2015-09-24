@@ -51,7 +51,10 @@ function generateGraph(id, elemId, yAxis){
       onComplete: function() {
         // this is also where you can set up your axes and hover detail
           var detail = new Rickshaw.Graph.HoverDetail({
-            graph: this.graph
+            graph: this.graph,
+            xFormatter: function(x) {
+              return new Date(x * 1000).toString();
+            }
            });
 
           var xAxis = new Rickshaw.Graph.Axis.Time( {
@@ -63,12 +66,11 @@ function generateGraph(id, elemId, yAxis){
           var y_axis = new Rickshaw.Graph.Axis.Y( {
                   graph: graph,
                   orientation: 'left',
-                  tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+                  //tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
                   element: document.getElementById('y_axis' + id),
 
           } );
           y_axis.render();
-          y_axis.graph.update();
 
 
           this.graph.render();
