@@ -30,7 +30,6 @@ $(document).ready(function() {
       url: '/device/destroy/' + deviceId,
       type: 'DELETE',
       success: function(data) {
-        console.log('device deleted!');
         parentElem.remove(); 
       }
     });
@@ -51,7 +50,6 @@ $(document).ready(function() {
 
   // remove child device
   $('.devices').on('click', '.child-device-remove', function() {
-    console.log('delete child');
     $(this).parent().remove();
   });
 
@@ -60,7 +58,6 @@ $(document).ready(function() {
   // Format: [{name:<value>, color: <value>}]
 
   $('#add-data-btn').click(function() {
-    console.log('add device variable');
     var order = $('#device-data').children('tr').length + 1;
     var colorpicker = $('<select class="variable-input colorpicker" data-type="color">' + 
         '<option value="#CD5C5C" data-color="#CD5C5C" selected="selected">indianred</option>' +
@@ -134,7 +131,6 @@ $(document).ready(function() {
     }
     
     $.each(variableData, function(index, data) {
-      console.log(data.color)
       $($('select.variable-input')[index]).colorselector('setColor', data.color); 
     });
   }

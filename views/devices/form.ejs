@@ -93,9 +93,106 @@
             <label class="col-md-3 col-xs-12 control-label">Location</label>
             <div class="col-md-6 col-xs-12">
               <div class="input-group">
-                <input type="text" name="location" id="location" class="form-control" value="<%= device.location %>" />
+                <input id="search-box" name="location" class="form-control controls" type="text" placeholder="Search Box" value="<%= device.location %>">
+                <input type="hidden" name="gmap" id="gmap" class="form-control" value="<%= device.gmap %>" />
+                <br>
+                <br>
+                <div id="map" style="height: 400px; width: 600px;"></div>
               </div>
             </div>
+              <script type="text/javascript">
+              // google map
+              var map;
+              function initMap() {
+                var bounds = new google.maps.LatLngBounds();
+                <%
+                  var latitude  = null;
+                  var longitude = null;
+                  if (typeof  device.lat !== 'undefined') {
+                    latitude  = device.lat();
+                  }
+                  if ( typeof device.lng !== 'undefined') {
+                    longitude = device.lng();
+                  }
+
+                %>
+                var lat = "<%= latitude %>" || "14.599512";
+                var lng = "<%= longitude %>" || "120.98422";
+                var default_location = new google.maps.LatLng( parseFloat(lat), parseFloat(lng));
+
+                var map = new google.maps.Map(document.getElementById('map'), {
+                  center: {lat: parseFloat(lat), lng: parseFloat(lng)},
+                  zoom: 12,
+                  mapTypeId: google.maps.MapTypeId.ROADMAP
+                });
+
+                // set default location
+                // bounds.extend(default_location);
+                // map.fitBounds(bounds);
+
+                // Create the search box and link it to the UI element.
+                var searchInput = document.getElementById('search-box');
+                var searchBox = new google.maps.places.SearchBox(searchInput);
+                map.controls[google.maps.ControlPosition.TOP_LEFT].push(searchInput);
+
+                // Bias the SearchBox results towards current map's viewport.
+                map.addListener('bounds_changed', function() {
+                  searchBox.setBounds(map.getBounds());
+                });
+
+                var markers = [];
+                // [START region_getplaces]
+                // Listen for the event fired when the user selects a prediction and retrieve
+                // more details for that place.
+                searchBox.addListener('places_changed', function() {
+                  var places = searchBox.getPlaces();
+
+                  if (places.length == 0) {
+                    return;
+                  }
+
+                  // Clear out the old markers.
+                  markers.forEach(function(marker) {
+                    marker.setMap(null);
+                  });
+                  markers = [];
+
+                  // For each place, get the icon, name and location.
+                  places.forEach(function(place) {
+                    var location = place.geometry.location;
+                    
+                    // set gmap value
+                    $('#gmap').val(location.lat() + ',' + location.lng());
+                    console.log(place.icon);  
+                    var icon = {
+                      url: place.icon,
+                      size: new google.maps.Size(71, 71),
+                      origin: new google.maps.Point(0, 0),
+                      anchor: new google.maps.Point(17, 34),
+                      scaledSize: new google.maps.Size(25, 25)
+                    };
+
+                    // Create a marker for each place.
+                    markers.push(new google.maps.Marker({
+                      map: map,
+                      icon: icon,
+                      title: place.name,
+                      position: place.geometry.location
+                    }));
+
+                    if (place.geometry.viewport) {
+                      // Only geocodes have viewport.
+                      bounds.union(place.geometry.viewport);
+                    } else {
+                      bounds.extend(place.geometry.location);
+                    }
+                  });
+                  map.fitBounds(bounds);
+                });
+                // [END region_getplaces]
+              }
+              </script> 
+              <script async defer type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBxhEVx2ucXJx6ldybmwbbFGsN2e2TeR9Q&callback=initMap&libraries=places"></script>
           </div>
 
           <div class="form-group">

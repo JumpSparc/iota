@@ -27,5 +27,19 @@ var deviceSchema = Schema({
   created_at:  { type: Date, default: Date.now } 
 }); 
 
+
+// return long lat of device if available
+deviceSchema.methods.lat = function(){
+  var gmap = this.gmap.split(',');
+  return gmap[0];
+};
+
+deviceSchema.methods.lng = function(){
+  var gmap = this.gmap.split(',');
+  return gmap[1];
+};
+
+
+
 // Model
 module.exports = mongoose.model('Device',deviceSchema);

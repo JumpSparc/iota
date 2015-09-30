@@ -26,6 +26,7 @@ module.exports = function(passport) {
       name: req.body.name,
       privacy: req.body.privacy,
       location: req.body.location,
+      gmap: req.body.gmap,
       cluster: cluster,
       graph: req.body.graph,
       desc: req.body.desc,
@@ -81,6 +82,7 @@ module.exports = function(passport) {
       desc:  req.body.desc,
       privacy: req.body.privacy,
       location: req.body.location,
+      gmap: req.body.gmap,
       cluster: cluster,
       graph: req.body.graph,
       variable: JSON.parse(req.body.variable)
