@@ -94,5 +94,31 @@ app.use(function(err, req, res, next) {
   });
 });
 
+// quota guard
+var http, options, proxy, url;
+
+http = require("http");
+
+url = require("url");
+
+qg_proxy = url.parse(process.env.QUOTAGUARDSTATIC_URL || 'http://quotaguard3753:6573bf143e5c@us-east-1-static-hopper.quotaguard.com:9293' );
+qg_target  = url.parse("http://ip.quotaguard.com/");
+
+qg_options = {
+    hostname: qg_proxy.hostname,
+    port: qg_proxy.port || 80,
+    path: qg_target.href,
+    headers: {
+      "Proxy-Authorization": "Basic " + (new Buffer(qg_proxy.auth).toString("base64")),
+      "Host" : qg_target.hostname
+    }
+};
+
+http.get(qg_options, function(res) {
+    res.pipe(process.stdout);
+      return console.log("status code", res.statusCode);
+});
+// quotaguard end
+
 app.listen(port);
 console.log('listening to port: ' + port);
