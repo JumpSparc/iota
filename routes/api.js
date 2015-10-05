@@ -108,7 +108,8 @@ module.exports = function(){
         {   
           name: "Temperature Sensor",
           desc: "temperature",
-          location: "manila",
+          location: "Proudcloud, Quezon City, Calabarzon, Philippines",
+          gmap: "14.606737,121.08141699999999",
           privacy: false,
           variables: [{
            "name":"celsius",
@@ -121,7 +122,8 @@ module.exports = function(){
         {   
           name: "Solar Test",
           desc: "solar panel at home",
-          location: "manila",
+          location: "Manila, NCR, Philippines",
+          gmap: "14.5995124,120.9842195",
           privacy: false,
           variables: [{
               "name":"power",
