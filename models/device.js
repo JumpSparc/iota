@@ -30,13 +30,23 @@ var deviceSchema = Schema({
 
 // return long lat of device if available
 deviceSchema.methods.lat = function(){
-  var gmap = this.gmap.split(',');
-  return gmap[0];
+  if(this.gmap){
+    var gmap = this.gmap.split(',');
+    return gmap[0];
+  }
+  else{
+    return null;
+  }
 };
 
 deviceSchema.methods.lng = function(){
-  var gmap = this.gmap.split(',');
-  return gmap[1];
+  if(this.gmap){
+    var gmap = this.gmap.split(',');
+    return gmap[1];
+  }
+  else{
+    return null;
+  }
 };
 
 

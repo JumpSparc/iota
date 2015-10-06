@@ -138,8 +138,6 @@ module.exports = function(){
                 all_devices.push(item);
                 callback();
               });
-
-
             },
             // return function
             function(err) {
@@ -158,17 +156,58 @@ module.exports = function(){
     }
   })
   
-  .get('/create_device', function(req, res, next) {
-    var user_id  = req.query.user_id;
-    var name     = req.query.name;
-    var desc     = req.query.desc;
-    var privacy  = req.query.privacy;
-    var graph    = req.query.graph;
-    var location = req.query.location;
-    var variable = {name: req.query.data, color: "#CD5C5C"};
+  .get('/add_device', function(req, res, next) {
+    var newDevice = {
+      user_id:   req.query.user_id,
+      name:      req.query.name,
+      desc:      req.query.desc,
+      privacy:   req.query.privacy,
+      graph:     'area',
+      location:  req.query.location,
+      gmap:      req.query.gmap,
+      variable:  { name: req.query.data, color: "#CD5C5C" }
+    }
+    
+    if(req.query.user_id !== undefined && req.query.name !== undefined){
+      saveDevice(newDevice, req, res);
+    }
+    else{
+      res.json({error: "user_id and name required"});
+    }
+  })
+  
+  .get('/update_device', function(req, res, next) {
+    var device_id = req.query.device_id;
+
+    var device = {
+      name:      req.query.name,
+      desc:      req.query.desc,
+      privacy:   req.query.privacy,
+      location:  req.query.location,
+      gmap:      req.query.gmap,
+      variable:  { name: req.query.data, color: "#CD5C5C" }
+    }
+
+    if(req.query.device_id !== undefined){
+      updateDevice(device_id, device, req, res);
+    }
+    else{
+      res.json({error: "device_id required"});
+    }
   
   })
 
+  .get('/delete_device', function(req, res, next) {
+    if(req.query.device_id !== undefined){
+      Device.find({ _id: req.query.device_id }).remove().exec();
+      res.json({status: "Device " + req.query.device_id + " deleted"});
+    }
+    else{
+      res.json({error: "device_id required"});
+    }
+  
+  })
+  
   .get('/forget_pass', function(req, res, next) {
   
   });
@@ -176,3 +215,19 @@ module.exports = function(){
 
   return router;
 };
+
+function saveDevice(data, req, res) {
+  Device.create(data, function(err) {
+    if(err) res.json({message: err});
+
+    res.json({ device_id: data }); 
+  });
+}
+
+function updateDevice(device_id, data, req, res) {
+  Device.findOneAndUpdate({_id: device_id}, data, function(err, device){
+    if(err) res.json({message: err});
+
+    res.json(device); 
+  });
+}
