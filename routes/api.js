@@ -105,38 +105,6 @@ module.exports = function(){
     if(user_id){
       var data = [];
 
-      /*
-      data.push(
-        {   
-          name: "Temperature Sensor",
-          desc: "temperature",
-          location: "Proudcloud, Quezon City, Calabarzon, Philippines",
-          gmap: "14.606737,121.08141699999999",
-          privacy: false,
-          variables: [{
-           "name":"celsius",
-           "color":"#48D1CC",
-           "data":[{"x":1442829289502,"y":24},{"x":1442829291048,"y":27},{"x":1442829292523,"y":22},{"x":1442829294187,"y":24},{"x":1442829295647,"y":23},{"x":1442829297526,"y":24},{"x":1442829299135,"y":25},{"x":1442829300604,"y":26},{"x":1442829302164,"y":22},{"x":1442829303935,"y":27},{"x":1442829305707,"y":27},{"x":1442829308549,"y":28}]
-         }]
-        }
-      );
-      data.push(
-        {   
-          name: "Solar Test",
-          desc: "solar panel at home",
-          location: "Manila, NCR, Philippines",
-          gmap: "14.5995124,120.9842195",
-          privacy: false,
-          variables: [{
-              "name":"power",
-              "color":"#CD5C5C",
-              "data":[{"x":1442829201754,"y":4},{"x":1442829204463,"y":2},{"x":1442829206532,"y":5},{"x":1442829209300,"y":2},{"x":1442829211188,"y":3},{"x":1442829214003,"y":5},{"x":1442829216976,"y":2}]
-          }]
-        }
-      );
-      res.json(data);
-      */
-
       Device.find({user_id: user_id}, function(err, devices) {
         if(devices){
           var all_devices = [];
