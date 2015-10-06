@@ -104,6 +104,8 @@ module.exports = function(){
     var user_id = req.params.id;
     if(user_id){
       var data = [];
+
+      /*
       data.push(
         {   
           name: "Temperature Sensor",
@@ -133,13 +135,13 @@ module.exports = function(){
         }
       );
       res.json(data);
-/*      Device.find({user_id: user_id}, function(err, devices) {
+      */
+
+      Device.find({user_id: user_id}, function(err, devices) {
         if(devices){
           var all_devices = [];
-
-          devices.forEach(function(device) {
-            if(device){
-            console.log(device.name);
+          async.each(devices,
+            function(device, callback){
               var d = Log.find({'device_id' : device.id }, 'created_at data').limit(1000);
               d.exec( function(err, logs) {
                 if (err) throw err;
@@ -155,17 +157,33 @@ module.exports = function(){
                     data: data
                   });
                 });
-                all_devices.push(series);
-              });
-            }
-          });      
 
-          res.json(all_devices);
+                var item = {   
+                  name: device.name,
+                  desc: device.desc,
+                  location: device.location,
+                  gmap: device.gmap,
+                  privacy: device.privacy,
+                  variables: series
+                }
+ 
+                all_devices.push(item);
+                callback();
+              });
+
+
+            },
+            // return function
+            function(err) {
+              res.json(all_devices);
+            }
+          );
+
         }
         else{
           res.json({error: 'no devices found'});
         }
-      });  */
+      });  
     }
     else{
       res.json({error: "User id required."});
