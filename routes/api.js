@@ -207,6 +207,18 @@ module.exports = function(){
     }
   
   })
+
+  .get('/device_status/:id', function(req, res, next) {
+    var device_id = req.params.id;
+    Device.findOne({_id: device_id}, function(err, device) {
+      if (device) {
+        res.json({status: device.status});
+      }
+      else{
+        res.json({error: "device not found."});
+      }
+    });
+  })
   
   .get('/forget_pass', function(req, res, next) {
   

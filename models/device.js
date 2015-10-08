@@ -18,6 +18,7 @@ var deviceSchema = Schema({
   graph:       String,
   location:    String,
   gmap:        String,
+  status:      String,
   data:        [String],
   variable:    [Mixed], // {name:"value", color: "hex-value"}
   child_devices: [{
