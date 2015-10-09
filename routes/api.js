@@ -127,6 +127,7 @@ module.exports = function(){
                 });
 
                 var item = {   
+                  id: device.id,
                   name: device.name,
                   desc: device.desc,
                   status: device.status,
