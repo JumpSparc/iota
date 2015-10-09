@@ -129,6 +129,7 @@ module.exports = function(){
                 var item = {   
                   name: device.name,
                   desc: device.desc,
+                  status: device.status,
                   location: device.location,
                   gmap: device.gmap,
                   privacy: device.privacy,
@@ -162,6 +163,7 @@ module.exports = function(){
       name:      req.query.name,
       desc:      req.query.desc,
       privacy:   req.query.privacy,
+      status:    'on',
       graph:     'area',
       location:  req.query.location,
       gmap:      req.query.gmap,
