@@ -219,6 +219,17 @@ module.exports = function(){
       }
     });
   })
+
+  .get('/device/:command/:id', function(req, res, next) {
+    var device_id = req.params.id;
+    var command   = req.params.command;
+    if(device_id){
+      updateDevice(device_id, {status: command}, req, res)      
+    }
+    else{
+      res.json({error: "device_id required."});
+    }
+  })
   
   .get('/forget_pass', function(req, res, next) {
   
