@@ -51,7 +51,7 @@ module.exports = function(){
   .get('/fetch/:id', function(req, res, next) {
     Device.findOne({ _id: req.params.id }, function(err, device) {
       if(device){
-        var d = Log.find({'device_id' : device.id }, 'created_at data').limit(1000);
+        var d = Log.find({'device_id' : device.id }).sort('-created_at').limit(1000);
         d.exec( function(err, logs) {
           if (err) throw err;
           var series = [];
@@ -65,6 +65,10 @@ module.exports = function(){
               color: item.color,
               data: data
             });
+          });
+          // sorts the data in asc order
+          series.map(function(item){
+            item.data.reverse();
           });
           res.json(series);
         });
