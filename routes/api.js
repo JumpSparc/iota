@@ -251,7 +251,7 @@ module.exports = function(){
     var user_id   = req.params.user_id;
 
     if (user_id && device_id) {
-      updateDevice({_id: device_id}, {user_id: user_id}, req, res);
+      updateDevice(device_id, {user_id: user_id}, req, res);
     }
   });
 
