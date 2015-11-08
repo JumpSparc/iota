@@ -8,7 +8,7 @@
 	</head>
   <body>
     <div class="container">
-        <div class="col-md-12 panel">
+        <div class="col-md-12 panel" style="padding-top:50px;">
           <div class="col-md-6">
             <form method="post">
               <label>Add new device</label>
@@ -20,9 +20,10 @@
             </form>
           </div>
               
-          <div class="col-md-6">
+          <div class="col-md-6" style="border-left: 1px solid #d3d3d3;">
             <label>Select device to generate QR code</label>
             <select id="deviceSelect">
+              <option value="">Select Device</option>
               <% devices.forEach(function(device) { %>
                 <option value="<%= device._id %>">  <%= device.name %> </option>
               <% }); %>
