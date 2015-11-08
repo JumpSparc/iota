@@ -247,11 +247,14 @@ module.exports = function(){
   // register through qr code in mobile
   // accepts user_id and device_id only
   .get('/qr_add_device', function(req, res, next){
-    var device_id = req.params.device_id;
-    var user_id   = req.params.user_id;
+    var device_id = req.query.device_id;
+    var user_id   = req.query.user_id;
 
     if (user_id && device_id) {
       updateDevice(device_id, {user_id: user_id}, req, res);
+    }
+    else{
+      res.json({ error: "user_id and device_id required.", params: req.params })
     }
   });
 
