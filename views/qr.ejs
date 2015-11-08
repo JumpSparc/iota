@@ -1,0 +1,54 @@
+<html>
+  <head> 
+    <link rel='stylesheet' href='/stylesheets/theme-dark.css' />
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    
+    <script type="text/javascript" src="/js/plugins/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/qrcode.min.js"></script>
+	</head>
+  <body>
+    <div class="container">
+        <div class="col-md-12 panel">
+          <div class="col-md-6">
+            <form method="post">
+              <label>Add new device</label>
+              <p class="note">This will add a device without an owner</p>
+              <p class="note">Format (Device Name - Owner Name)</p>
+              <p class="note">sample: Home Sensor - Rick Tungol</p>
+              <input type="text" name="deviceName">
+              <input type="submit">
+            </form>
+          </div>
+              
+          <div class="col-md-6">
+            <label>Select device to generate QR code</label>
+            <select id="deviceSelect">
+              <% devices.forEach(function(device) { %>
+                <option value="<%= device._id %>">  <%= device.name %> </option>
+              <% }); %>
+            </select>
+            <div id="qr_img" style="padding: 20px;"></div>
+          </div>  
+        </div>
+    </div>
+
+
+
+  <script>
+    var qrcode = new QRCode(document.getElementById("qr_img"), {
+      width : 200,
+      height : 200,
+      useSVG: true
+    });
+
+    $('#deviceSelect').change(function() {
+      var val = $(this).val();
+      if(val){
+        qrcode.makeCode(val.toString());
+      }
+
+    });
+
+  </script>
+	</body>
+</html>

@@ -44,6 +44,7 @@ var index   = require('./routes/index')(passport);
 var users   = require('./routes/users')(passport);
 var devices = require('./routes/devices')(passport);
 var api     = require('./routes/api')();
+var mobile  = require('./routes/mobile')();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -62,6 +63,7 @@ app.use('/', index);
 app.use('/user', users);
 app.use('/device', devices);
 app.use('/api/v1/', api);
+app.use('/m/', mobile);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

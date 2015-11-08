@@ -153,6 +153,8 @@ module.exports = function(passport) {
   return router;
 };
 
+// TODO: make optional redirect location
+// - for QR too
 function saveDevice(data, req, res) {
   Device.create(data, function(err) {
     if(err) res.render('devices/new', {message: err});
@@ -162,6 +164,7 @@ function saveDevice(data, req, res) {
   });
 }
 
+// TODO: make optional redirect location 
 function updateDevice(data, req, res) {
   Device.findOneAndUpdate({_id: req.body._id}, data, function(err, device){
     req.flash('deviceMessage', 'Device updated!');

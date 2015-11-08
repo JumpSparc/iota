@@ -1,13 +1,11 @@
 var express = require('express');
 var router  = express.Router();
-var User   = require('../models/user');
-var Device   = require('../models/device');
-var Log   = require('../models/log');
-var auth = require('../lib/auth');
+var User    = require('../models/user');
+var Device  = require('../models/device');
+var Log     = require('../models/log');
+var auth    = require('../lib/auth');
 
 module.exports = function(passport){
-
-
   router.get('/', auth.isLoggedIn, function(req, res, next) {
     Device.find({ user_id: req.user._id }, function(err, devices) {
     
@@ -45,6 +43,27 @@ module.exports = function(passport){
         
         req.flash('changePassMessage', 'Password changed!');
         res.redirect('/profile');
+      });
+    });
+  })
+
+  // Generates QR code for new devices without owners
+  // Can create new devices here
+  .get('/qr', function(req, res, next){
+    var d = Device.find({user_id: null}).sort('-created_at');
+    d.exec(function(err, devices){
+      res.render('qr', { devices: devices });
+    });
+  })
+
+  // in qr generate allow admin to add devices with no owners
+  .post('/qr',function(req, res, next){
+    Device.create({name: req.body.deviceName}, function(err, device) {
+      if(err) res.json({message: err});
+   
+      var d = Device.find({user_id: null}).sort('-created_at');
+      d.exec(function(err, devices){
+        res.render('qr', { devices: devices });
       });
     });
   });

@@ -238,22 +238,10 @@ module.exports = function(){
     }
   })
   
-  // TODO: add forget password
   .get('/forget_pass', function(req, res, next) {
   
-  })
-
-  // devices with no user
-  // register through qr code in mobile
-  // accepts user_id and device_id only
-  .get('/qr_add_device', function(req, res, next){
-    var device_id = req.params.device_id;
-    var user_id   = req.params.user_id;
-
-    if (user_id && device_id) {
-      updateDevice({_id: device_id}, {user_id: user_id}, req, res);
-    }
   });
+
 
   return router;
 };
