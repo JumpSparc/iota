@@ -20,7 +20,7 @@ var deviceSchema = Schema({
   gmap:        String,
   status:      String,
   data:        [String],
-  variable:    [Mixed], // {name:"value", color: "hex-value"}
+  variable:    [Mixed], // {name:"temperature", label: "celsius",  color: "hex-value"}
   child_devices: [{
     type: ObjectId,
     ref: 'Device'

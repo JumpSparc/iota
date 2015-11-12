@@ -12,42 +12,6 @@ module.exports = function(){
     res.json('You lost?');
   })
   
-  .get('/push', function(req, res, next) {
-    // require device_id for push
-    if (!req.query.device_id){
-      res.json({error: 'device_id required.'});
-    } // endif
-    else{
-      var device_id = req.query.device_id; 
-      // remove the device_id from the query object
-      delete req.query.device_id;
-
-      Device.findOne({_id: device_id}, function(err, device) {
-        var  query_keys = Object.keys(req.query);
-        if (device){
-          var variables = device.variable.map(function(item) { return item.name; });
-          // if query has valid data
-          if(_.isEqual(variables.sort(), query_keys.sort())) {
-            newLog = new Log({
-              device_id: device._id,
-              data: req.query
-            });
-
-            newLog.save(function(err, data) {
-              res.json({status: 'Success'});
-            });
-          }
-          else{
-            res.json({ error: "Allowed Data: " + variables.join(', ') });
-          } 
-        }
-        else{
-          res.json({error: 'Device does not exist.'});
-        }
-      });
-    } // end else
-  })
-  
   .get('/fetch/:id', function(req, res, next) {
     Device.findOne({ _id: req.params.id }, function(err, device) {
       if(device){
@@ -103,7 +67,6 @@ module.exports = function(){
     }
   })
   
-  // TODO add async loop to fix this shit
   .get('/fetch/all_devices/:id', function(req, res, next) {
     var user_id = req.params.id;
     if(user_id){
@@ -238,10 +201,25 @@ module.exports = function(){
     }
   })
   
+  // TODO: add forget password
   .get('/forget_pass', function(req, res, next) {
   
-  });
+  })
 
+  // devices with no user
+  // register through qr code in mobile
+  // accepts user_id and device_id only
+  .get('/qr_add_device', function(req, res, next){
+    var device_id = req.query.device_id;
+    var user_id   = req.query.user_id;
+
+    if (user_id && device_id) {
+      updateDevice(device_id, {user_id: user_id}, req, res);
+    }
+    else{
+      res.json({ error: "user_id and device_id required.", params: req.params })
+    }
+  });
 
   return router;
 };

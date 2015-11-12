@@ -48,6 +48,7 @@ module.exports = function(){
     } // end else
   })
   
+  // get device
   .get('/fetch/:id', function(req, res, next) {
     Device.findOne({ _id: req.params.id }, function(err, device) {
       if(device){
@@ -62,6 +63,7 @@ module.exports = function(){
             });
             series.push({
               name: item.name,
+              label: item.label,
               color: item.color,
               data: data
             });
@@ -81,6 +83,7 @@ module.exports = function(){
   
 
   // Mobile
+  // User Sign in
   .get('/sign_in', function(req, res, next) {
 
     var email = req.query.email;
@@ -103,7 +106,27 @@ module.exports = function(){
     }
   })
   
-  // TODO add async loop to fix this shit
+  // create user
+  .get('/signup', function(req, res, next){
+    var email = req.query.email;
+    var password = req.query.password;
+    if (email && password){
+      var newUser = new User({
+        email: req.query.email,
+        password: req.query.password
+      });
+
+      newUser.save(function(err, user) {
+        if(err) res.json({error: err});
+        else res.json({user: user});
+      });
+    }
+    else{
+      res.json({error: "email and password required."});
+    }
+  })
+
+  // get all devices
   .get('/fetch/all_devices/:id', function(req, res, next) {
     var user_id = req.params.id;
     if(user_id){
@@ -125,6 +148,7 @@ module.exports = function(){
                   });
                   series.push({
                     name: item.name,
+                    label: item.label,
                     color: item.color,
                     data: data
                   });
@@ -162,6 +186,7 @@ module.exports = function(){
     }
   })
   
+  // add Device 
   .get('/add_device', function(req, res, next) {
     var newDevice = {
       user_id:   req.query.user_id,
@@ -172,7 +197,7 @@ module.exports = function(){
       graph:     'area',
       location:  req.query.location,
       gmap:      req.query.gmap,
-      variable:  { name: req.query.data, color: "#CD5C5C" }
+      variable:  { name: req.query.data, label: req.query.label, color: "#CD5C5C" }
     }
     
     if(req.query.user_id !== undefined && req.query.name !== undefined){
@@ -183,6 +208,7 @@ module.exports = function(){
     }
   })
   
+  // update device
   .get('/update_device', function(req, res, next) {
     var device_id = req.query.device_id;
 
@@ -192,7 +218,7 @@ module.exports = function(){
       privacy:   req.query.privacy,
       location:  req.query.location,
       gmap:      req.query.gmap,
-      variable:  { name: req.query.data, color: "#CD5C5C" }
+      variable:  { name: req.query.data, label: req.query.label, color: "#CD5C5C" }
     }
 
     if(req.query.device_id !== undefined){
@@ -204,6 +230,7 @@ module.exports = function(){
   
   })
 
+  // delete device
   .get('/delete_device', function(req, res, next) {
     if(req.query.device_id !== undefined){
       Device.find({ _id: req.query.device_id }).remove().exec();
@@ -212,9 +239,9 @@ module.exports = function(){
     else{
       res.json({error: "device_id required"});
     }
-  
   })
 
+  // ON / OFF status for device
   .get('/device_status/:id', function(req, res, next) {
     var device_id = req.params.id;
     Device.findOne({_id: device_id}, function(err, device) {
@@ -227,6 +254,8 @@ module.exports = function(){
     });
   })
 
+  // set command 
+  // currently on / off only
   .get('/device/:command/:id', function(req, res, next) {
     var device_id = req.params.id;
     var command   = req.params.command;
@@ -270,9 +299,14 @@ function saveDevice(data, req, res) {
 }
 
 function updateDevice(device_id, data, req, res) {
-  Device.findOneAndUpdate({_id: device_id}, data, function(err, device){
-    if(err) res.json({message: err});
+  if (device_id) {
+    Device.findOneAndUpdate({_id: device_id}, data, function(err, device){
+      if(err) res.json({message: err});
 
-    res.json(device); 
-  });
+      res.json(device); 
+    });
+  }
+  else{
+    res.json({ error: "device_id required."});
+  }
 }

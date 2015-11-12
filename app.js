@@ -123,4 +123,3 @@ http.get(qg_options, function(res) {
 // quotaguard end
 
 app.listen(port);
-console.log('listening to port: ' + port);
