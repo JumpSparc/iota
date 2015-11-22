@@ -267,6 +267,26 @@ module.exports = function(){
     }
   })
   
+  // set rules for device
+  .get('/device_rules', function(req, res, next) {
+    var device_id = req.query.device_id;
+
+    var device = {
+      max:      req.query.max,
+      min:      req.query.min,
+      max_action:   req.query.max_action,
+      min_action:   req.query.min_action
+    }
+
+    if(req.query.device_id !== undefined){
+      updateDevice(device_id, device, req, res);
+    }
+    else{
+      res.json({error: "device_id required"});
+    }
+  })
+
+
   // TODO: add forget password
   .get('/forget_pass', function(req, res, next) {
   
