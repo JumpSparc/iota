@@ -65,7 +65,11 @@ module.exports = function(){
               name: item.name,
               label: item.label,
               color: item.color,
-              data: data
+              data: data,
+              max: item.max,
+              min: item.min,
+              max_action: item.max_action,
+              min_action: item.max_action
             });
           });
           // sorts the data in asc order
@@ -150,7 +154,11 @@ module.exports = function(){
                     name: item.name,
                     label: item.label,
                     color: item.color,
-                    data: data
+                    data: data,
+                    max: item.max,
+                    min: item.min,
+                    max_action: item.max_action,
+                    min_action: item.max_action
                   });
                 });
 
@@ -323,7 +331,17 @@ function updateDevice(device_id, data, req, res) {
     Device.findOneAndUpdate({_id: device_id}, data, function(err, device){
       if(err) res.json({message: err});
 
-      res.json(device); 
+      // TODO fix device model name variables
+      var item = {
+        _id: device.id,
+        name: device.name,
+        user_id: device.user_id,
+        created_at: device.created_at,
+        child_devices: device.child_devices,
+        variables: device.variable,
+        data: device.data
+      };
+      res.json(item); 
     });
   }
   else{
