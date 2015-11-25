@@ -279,18 +279,64 @@ module.exports = function(){
   .get('/device_rules', function(req, res, next) {
     var device_id = req.query.device_id;
 
-    var device = {
-      max:      req.query.max,
-      min:      req.query.min,
-      max_action:   req.query.max_action,
-      min_action:   req.query.min_action
-    }
 
-    if(req.query.device_id !== undefined){
-      updateDevice(device_id, device, req, res);
+    if (device_id) {
+      Device.findOne({_id: device_id}, function(err, dv){
+        if(err) res.json({message: err});
+        console.log("device_rules: Device found");
+
+        // TODO fix device model name variables
+        if(dv){
+          var data;
+
+          if(dv.variable.lenght > 0) {
+            data = {
+              variable: dv.variable,
+            };
+            data.variable[0].max = req.query.max;
+            data.variable[0].min = req.query.min;
+            data.variable[0].max_action = req.query.max_action;
+            data.variable[0].min_action = req.query.min_action;
+          }
+          else {
+            data = {
+              variable: [{
+                max: req.query.max,
+                min: req.query.min,
+                max_action: req.query.max_action,
+                min_action: req.query.min_action
+              }]
+            };
+          }
+
+          // res.json(data);
+          
+          Device.findOneAndUpdate({_id: device_id}, data, function(err, device){ 
+            if(err) res.json({message: err});
+
+            if(device){
+              var item = {
+                _id: device.id,
+                name: device.name,
+                user_id: device.user_id,
+                created_at: device.created_at,
+                child_devices: device.child_devices,
+                variables: device.variable,
+                data: device.data
+              };
+
+              res.json(item);
+            }
+
+          });
+        }
+        else{
+          res.json({error: "device not found"});
+        }
+      });
     }
     else{
-      res.json({error: "device_id required"});
+      res.json({ error: "device_id required."});
     }
   })
 
