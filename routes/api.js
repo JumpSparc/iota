@@ -77,7 +77,7 @@ module.exports = function(){
               max: item.max,
               min: item.min,
               max_action: item.max_action,
-              min_action: item.max_action
+              min_action: item.min_action
             });
           });
           // sorts the data in asc order
@@ -179,7 +179,7 @@ module.exports = function(){
                     max: item.max,
                     min: item.min,
                     max_action: item.max_action,
-                    min_action: item.max_action
+                    min_action: item.min_action
                   });
                 });
 
@@ -234,49 +234,91 @@ module.exports = function(){
     }
     
     if(req.query.user_id !== undefined && req.query.name !== undefined){
+      console.log(newDevice); 
+      console.log("-------------------------------------------"); 
       saveDevice(newDevice, req, res);
     }
     else{
+      console.log("user_id and name required"); 
+      console.log("-------------------------------------------"); 
       res.json({error: "user_id and name required"});
     }
   })
   
-  // update device
+  // update devic
   .get('/update_device', function(req, res, next) {
     console.log("/update_device"); 
     console.log(req.query); 
-    console.log("-------------------------------------------"); 
 
-    var device_id = req.query.device_id;
-    var device = {
-      name:      req.query.name,
-      desc:      req.query.desc,
-      privacy:   req.query.privacy,
-      location:  req.query.location,
-      gmap:      req.query.gmap,
-      variable:  { name: req.query.data, label: req.query.label, color: "#CD5C5C" }
-    }
+    if(req.query.device_id !== undefined) {
+      var device_id = req.query.device_id;
 
-    if(req.query.device_id !== undefined){
-      updateDevice(device_id, device, req, res);
+      Device.findOne({_id: device_id}, function(err, device) {
+        if (!device) {
+          res.json({error: "device not found."});
+        }
+        else if(device && device.variable.length > 0){
+          var device_data = {
+            name:      req.query.name,
+            desc:      req.query.desc,
+            privacy:   req.query.privacy,
+            location:  req.query.location,
+            gmap:      req.query.gmap,
+            variable:  [{ 
+              name: req.query.data, 
+              label: req.query.label, 
+              color: "#CD5C5C",
+              max:  device.variable[0].max,
+              min:  device.variable[0].min,
+              max_action: device.variable[0].max_action,
+              min_action: device.variable[0].min_action
+            }]
+          }
+          console.log(device_data);
+          console.log("-------------------------------------------"); 
+          updateDevice(device_id, device_data, req, res);
+        }
+        else{
+          var device_data = {
+            name:      req.query.name,
+            desc:      req.query.desc,
+            privacy:   req.query.privacy,
+            location:  req.query.location,
+            gmap:      req.query.gmap,
+            variable:  [{ 
+              name: req.query.data, 
+              label: req.query.label, 
+              color: "#CD5C5C"
+            }]
+          }
+          console.log(device_data);
+          console.log("-------------------------------------------"); 
+          updateDevice(device_id, device_data, req, res);
+        }
+      });
     }
     else{
+      console.log("device_id required"); 
+      console.log("-------------------------------------------"); 
       res.json({error: "device_id required"});
     }
-  
   })
 
   // delete device
   .get('/delete_device', function(req, res, next) {
     console.log("/delete_device"); 
     console.log(req.query); 
-    console.log("-------------------------------------------"); 
+
 
     if(req.query.device_id !== undefined){
       Device.find({ _id: req.query.device_id }).remove().exec();
+      console.log("device deleted"); 
+      console.log("-------------------------------------------"); 
       res.json({status: "Device " + req.query.device_id + " deleted"});
     }
     else{
+      console.log("device_id required"); 
+      console.log("-------------------------------------------"); 
       res.json({error: "device_id required"});
     }
   })
@@ -319,7 +361,7 @@ module.exports = function(){
   .get('/device_rules', function(req, res, next) {
     console.log("/device/:command/:id"); 
     console.log(req.query); 
-    console.log("-------------------------------------------"); 
+
 
     var device_id = req.query.device_id;
     if (device_id) {
@@ -331,7 +373,7 @@ module.exports = function(){
         if(dv){
           var data;
 
-          if(dv.variable.lenght > 0) {
+          if(dv.variable.length > 0) {
             data = {
               variable: dv.variable,
             };
@@ -351,7 +393,7 @@ module.exports = function(){
             };
           }
 
-          // res.json(data);
+          console.log(data);
           
           Device.findOneAndUpdate({_id: device_id}, data, function(err, device){ 
             if(err) res.json({message: err});
@@ -367,12 +409,14 @@ module.exports = function(){
                 data: device.data
               };
 
+              console.log(item);
+              console.log("-------------------------------------------"); 
               res.json(item);
             }
-
           });
         }
         else{
+          console.log("-------------------------------------------"); 
           res.json({error: "device not found"});
         }
       });
