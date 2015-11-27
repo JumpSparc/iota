@@ -50,6 +50,10 @@ module.exports = function(){
   
   // get device
   .get('/fetch/:id', function(req, res, next) {
+    console.log("/fetch/:id"); 
+    console.log(req.params); 
+    console.log("-------------------------------------------"); 
+
     Device.findOne({ _id: req.params.id }, function(err, device) {
       if(device){
         var d = Log.find({'device_id' : device.id }).sort('-created_at').limit(1000);
@@ -89,6 +93,9 @@ module.exports = function(){
   // Mobile
   // User Sign in
   .get('/sign_in', function(req, res, next) {
+    console.log("/sign_in"); 
+    console.log(req.query); 
+    console.log("-------------------------------------------"); 
 
     var email = req.query.email;
     var password = req.query.password;
@@ -112,6 +119,10 @@ module.exports = function(){
   
   // create user
   .get('/signup', function(req, res, next){
+    console.log("/signup"); 
+    console.log(req.query); 
+    console.log("-------------------------------------------"); 
+
     var email = req.query.email;
     var password = req.query.password;
     if (email && password){
@@ -132,6 +143,10 @@ module.exports = function(){
 
   // get all devices
   .get('/fetch/all_devices/:id', function(req, res, next) {
+    console.log("/fetch/all_devices/:id"); 
+    console.log(req.params); 
+    console.log("-------------------------------------------"); 
+
     var user_id = req.params.id;
     if(user_id){
       var data = [];
@@ -196,6 +211,10 @@ module.exports = function(){
   
   // add Device 
   .get('/add_device', function(req, res, next) {
+    console.log("/add_device"); 
+    console.log(req.query); 
+    console.log("-------------------------------------------"); 
+
     var newDevice = {
       user_id:   req.query.user_id,
       name:      req.query.name,
@@ -218,8 +237,11 @@ module.exports = function(){
   
   // update device
   .get('/update_device', function(req, res, next) {
-    var device_id = req.query.device_id;
+    console.log("/update_device"); 
+    console.log(req.query); 
+    console.log("-------------------------------------------"); 
 
+    var device_id = req.query.device_id;
     var device = {
       name:      req.query.name,
       desc:      req.query.desc,
@@ -240,6 +262,10 @@ module.exports = function(){
 
   // delete device
   .get('/delete_device', function(req, res, next) {
+    console.log("/delete_device"); 
+    console.log(req.query); 
+    console.log("-------------------------------------------"); 
+
     if(req.query.device_id !== undefined){
       Device.find({ _id: req.query.device_id }).remove().exec();
       res.json({status: "Device " + req.query.device_id + " deleted"});
@@ -251,6 +277,10 @@ module.exports = function(){
 
   // ON / OFF status for device
   .get('/device_status/:id', function(req, res, next) {
+    console.log("/device_status/:id"); 
+    console.log(req.params); 
+    console.log("-------------------------------------------"); 
+
     var device_id = req.params.id;
     Device.findOne({_id: device_id}, function(err, device) {
       if (device) {
@@ -265,6 +295,10 @@ module.exports = function(){
   // set command 
   // currently on / off only
   .get('/device/:command/:id', function(req, res, next) {
+    console.log("/device/:command/:id"); 
+    console.log(req.params); 
+    console.log("-------------------------------------------"); 
+
     var device_id = req.params.id;
     var command   = req.params.command;
     if(device_id){
@@ -277,9 +311,11 @@ module.exports = function(){
   
   // set rules for device
   .get('/device_rules', function(req, res, next) {
+    console.log("/device/:command/:id"); 
+    console.log(req.query); 
+    console.log("-------------------------------------------"); 
+
     var device_id = req.query.device_id;
-
-
     if (device_id) {
       Device.findOne({_id: device_id}, function(err, dv){
         if(err) res.json({message: err});
@@ -350,6 +386,10 @@ module.exports = function(){
   // register through qr code in mobile
   // accepts user_id and device_id only
   .get('/qr_add_device', function(req, res, next){
+    console.log("/qr_add_device"); 
+    console.log(req.query); 
+    console.log("-------------------------------------------"); 
+
     var device_id = req.query.device_id;
     var user_id   = req.query.user_id;
 
