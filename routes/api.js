@@ -26,15 +26,19 @@ module.exports = function(){
         var  query_keys = Object.keys(req.query);
         if (device){
           var variables = device.variable.map(function(item) { return item.name; });
-          // if query has valid data
-          if(_.isEqual(variables.sort(), query_keys.sort())) {
+         
+          // if no variables are defined
+          if(variables.length === 0){
+            res.json({ error: "No variables defined." });
+          }
+          else if(_.isEqual(variables.sort(), query_keys.sort())) { // if query has valid data
             newLog = new Log({
               device_id: device._id,
               data: req.query
             });
 
             newLog.save(function(err, data) {
-              res.json({status: 'Success'});
+              res.json({ status: 'Success'});
             });
           }
           else{
@@ -163,7 +167,9 @@ module.exports = function(){
                 device.variable.forEach(function(item) {
                   var data = [];
                   logs.forEach(function(log) {
-                    data.push({ x: log.created_at.getTime(), y: parseInt(log.data[item.name]) });
+                    if(log.data !== undefined){
+                      data.push({ x: log.created_at.getTime(), y: parseInt(log.data[item.name]) });
+                    }
                   });
                   series.push({
                     name: item.name,
