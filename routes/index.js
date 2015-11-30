@@ -58,7 +58,7 @@ module.exports = function(passport){
 
   // in qr generate allow admin to add devices with no owners
   .post('/qr',function(req, res, next){
-    Device.create({name: req.body.deviceName}, function(err, device) {
+    Device.create({name: req.body.deviceName, status: 'off'}, function(err, device) {
       if(err) res.json({message: err});
    
       var d = Device.find({user_id: null}).sort('-created_at');

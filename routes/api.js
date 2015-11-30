@@ -226,7 +226,7 @@ module.exports = function(){
       name:      req.query.name,
       desc:      req.query.desc,
       privacy:   req.query.privacy,
-      status:    'on',
+      status:    'off',
       graph:     'area',
       location:  req.query.location,
       gmap:      req.query.gmap,
@@ -311,10 +311,12 @@ module.exports = function(){
 
 
     if(req.query.device_id !== undefined){
-      Device.find({ _id: req.query.device_id }).remove().exec();
-      console.log("device deleted"); 
-      console.log("-------------------------------------------"); 
-      res.json({status: "Device " + req.query.device_id + " deleted"});
+      Device.findOneAndUpdate({_id: req.query.device_id}, {user_id: null}, function(err, device){ 
+        console.log("device deleted"); 
+        console.log("-------------------------------------------"); 
+        res.json({status: "Device " + req.query.device_id + " deleted"});
+      });
+      
     }
     else{
       console.log("device_id required"); 
@@ -444,7 +446,25 @@ module.exports = function(){
     var user_id   = req.query.user_id;
 
     if (user_id && device_id) {
-      updateDevice(device_id, {user_id: user_id}, req, res);
+      Device.findOne({_id: device_id}, function(err, device) {
+        if (device) {
+          if(device.user_id !== null && device.user_id !== undefined){
+            console.log('device already registered');
+            console.log("-------------------------------------------"); 
+            res.json({error: "device already registered."});
+          }
+          else{
+            console.log('Device updated');
+            console.log("-------------------------------------------"); 
+            updateDevice(device_id, {user_id: user_id}, req, res);
+          }
+        }
+        else{
+          console.log('device not found');
+          console.log("-------------------------------------------"); 
+          res.json({error: "device not found."});
+        }
+      });
     }
     else{
       res.json({ error: "user_id and device_id required.", params: req.params })
