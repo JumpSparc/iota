@@ -26,6 +26,7 @@ module.exports = function(passport) {
       name: req.body.name,
       privacy: req.body.privacy,
       location: req.body.location,
+      status: 'off',
       gmap: req.body.gmap,
       cluster: cluster,
       graph: req.body.graph,

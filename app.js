@@ -116,10 +116,10 @@ qg_options = {
     }
 };
 
-http.get(qg_options, function(res) {
-    res.pipe(process.stdout);
-      return console.log("status code", res.statusCode);
-});
+// http.get(qg_options, function(res) {
+//  res.pipe(process.stdout);
+//  return console.log("status code", res.statusCode);
+// });
 // quotaguard end
 
 app.listen(port);

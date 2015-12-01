@@ -13,6 +13,8 @@ module.exports = function(){
   })
   
   .get('/push', function(req, res, next) {
+    console.log(req.query);
+    console.log('---------------------------------------------');
     // require device_id for push
     if (!req.query.device_id){
       res.json({error: 'device_id required.'});
@@ -334,7 +336,7 @@ module.exports = function(){
     var device_id = req.params.id;
     Device.findOne({_id: device_id}, function(err, device) {
       if (device) {
-        res.json({status: device.status});
+        res.json(device.status);
       }
       else{
         res.json({error: "device not found."});
@@ -342,6 +344,25 @@ module.exports = function(){
     });
   })
 
+  // device threshold
+  .get('/th/:id', function(req, res, next) {
+    console.log("/device_status/:id"); 
+    console.log(req.params); 
+    console.log("-------------------------------------------"); 
+
+    var device_id = req.params.id;
+    Device.findOne({_id: device_id}, function(err, device) {
+      if (device) {
+        console.log(device);
+        var max_action = (device.variable[0].max_action == 'on'? 1 : 0 );
+        var min_action = (device.variable[0].min_action == 'on'? 1 : 0 );
+        res.json("config#" + device.variable[0].max.trim() + " " + max_action + " " + device.variable[0].min.trim() + " " + min_action);
+      }
+      else{
+        res.json({error: "device not found."});
+      }
+    });
+  })
   // set command 
   // currently on / off only
   .get('/device/:command/:id', function(req, res, next) {
