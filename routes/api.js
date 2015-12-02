@@ -357,8 +357,8 @@ module.exports = function(){
         var max = null, min = null, max_action = null, min_action = null;
 
         if (device.variable[0] !== undefined) {
-          max = ( device.variable[0].max !== undefined || device.variable[0].max !== null ? device.variable[0].max.trim() : null )
-          min = ( device.variable[0].min !== undefined || device.variable[0].min !== null ? device.variable[0].min.trim() : null )
+          max = device.variable[0].max
+          min = device.variable[0].min
           max_action = (device.variable[0].max_action == 'on'? 1 : 0 );
           min_action = (device.variable[0].min_action == 'on'? 1 : 0 );
         }
