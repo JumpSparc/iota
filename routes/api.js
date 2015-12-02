@@ -354,9 +354,12 @@ module.exports = function(){
     Device.findOne({_id: device_id}, function(err, device) {
       if (device) {
         console.log(device);
+        var max = ( device.variable[0].max !== undefined || device.variable[0].max !== null ? device.variable[0].max.trim() : null )
+        var min = ( device.variable[0].min !== undefined || device.variable[0].min !== null ? device.variable[0].min.trim() : null )
         var max_action = (device.variable[0].max_action == 'on'? 1 : 0 );
         var min_action = (device.variable[0].min_action == 'on'? 1 : 0 );
-        res.json("config#" + device.variable[0].max.trim() + " " + max_action + " " + device.variable[0].min.trim() + " " + min_action);
+
+        res.json("config#" + max + " " + max_action + " " + min + " " + min_action);
       }
       else{
         res.json({error: "device not found."});
