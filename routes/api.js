@@ -13,6 +13,7 @@ module.exports = function(){
   })
   
   .get('/push', function(req, res, next) {
+    console.log("PUSH");
     console.log(req.query);
     console.log('---------------------------------------------');
     // require device_id for push
@@ -346,24 +347,25 @@ module.exports = function(){
 
   // device threshold
   .get('/th/:id', function(req, res, next) {
-    console.log("/device_status/:id"); 
+    console.log("/th/:id"); 
     console.log(req.params); 
     console.log("-------------------------------------------"); 
 
     var device_id = req.params.id;
     Device.findOne({_id: device_id}, function(err, device) {
       if (device) {
-        console.log(device);
         var max = null, min = null, max_action = null, min_action = null;
 
-        if (device.variable[0] !== undefined) {
+        if (device.variable[0] !== undefined && device.variable[0].max !== undefined && device.variable[0].min !== undefined) {
           max = device.variable[0].max
           min = device.variable[0].min
           max_action = (device.variable[0].max_action == 'on'? 1 : 0 );
           min_action = (device.variable[0].min_action == 'on'? 1 : 0 );
+          res.json("config#" + Math.floor(max) + " " + max_action + " " + Math.floor(min) + " " + min_action);
         }
-
-        res.json("config#" + max + " " + max_action + " " + min + " " + min_action);
+        else {
+          res.json({error: "Variable threshold not set."});
+        }
       }
       else{
         res.json({error: "device not found."});
@@ -511,6 +513,7 @@ function saveDevice(data, req, res) {
 }
 
 function updateDevice(device_id, data, req, res) {
+  console.log("updateDevice");
   if (device_id) {
     Device.findOneAndUpdate({_id: device_id}, data, function(err, device){
       if(err) res.json({message: err});
