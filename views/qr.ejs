@@ -28,6 +28,7 @@
                 <option value="<%= device._id %>">  <%= device.name %> </option>
               <% }); %>
             </select>
+            <div id="qr_id"></div>
             <div id="qr_img" style="padding: 20px;"></div>
           </div>  
         </div>
@@ -44,8 +45,12 @@
 
     $('#deviceSelect').change(function() {
       var val = $(this).val();
+      var p   = $("<p></p>");
       if(val){
         qrcode.makeCode(val.toString());
+        
+        p.text("Device ID: " + val);
+        $('#qr_id').html(p);
       }
 
     });
