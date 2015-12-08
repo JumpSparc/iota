@@ -63,7 +63,7 @@ module.exports = function(){
 
     Device.findOne({ _id: req.params.id }, function(err, device) {
       if(device){
-        var d = Log.find({'device_id' : device.id }).sort('-created_at').limit(1000);
+        var d = Log.find({'device_id' : device.id }).sort('-created_at');
         d.exec( function(err, logs) {
           if (err) throw err;
           var series = [];
